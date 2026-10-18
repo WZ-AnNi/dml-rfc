@@ -5,10 +5,10 @@
 # RFC-1 — Static markup emission (HTML / generic XML)
 
 - **Id:** RFC-1 (issue #1; the number is the id and is never reused)
-- **Stage:** stage:draft
+- **Stage:** stage:review
 - **State:** open
 - **Issue:** https://github.com/WZ-AnNi/dml-rfc/issues/1
-- **Updated:** 2026-10-18T01:00:13Z
+- **Updated:** 2026-10-18T01:08:43Z
 
 ---
 

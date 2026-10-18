@@ -1,18 +1,18 @@
 {
   "repo": "WZ-AnNi/dml-rfc",
-  "generatedAt": "2026-10-18T01:03:24.333Z",
+  "generatedAt": "2026-10-18T01:08:49.176Z",
   "count": 2,
   "rfc": [
     {
       "id": "RFC-1",
       "number": 1,
       "title": "Static markup emission (HTML / generic XML)",
-      "stage": "draft",
+      "stage": "review",
       "state": "open",
       "file": "0001-static-markup-emission-html-generic-xml.md",
       "url": "https://github.com/WZ-AnNi/dml-rfc/issues/1",
       "createdAt": "2026-10-18T00:59:49Z",
-      "updatedAt": "2026-10-18T01:00:13Z"
+      "updatedAt": "2026-10-18T01:08:43Z"
     },
     {
       "id": "RFC-2",
@@ -23,7 +23,7 @@
       "file": "0002-document-schema-declared-types-project-awareness-dynamic-val.md",
       "url": "https://github.com/WZ-AnNi/dml-rfc/issues/2",
       "createdAt": "2026-10-18T01:03:15Z",
-      "updatedAt": "2026-10-18T01:03:15Z"
+      "updatedAt": "2026-10-18T01:03:34Z"
     }
   ]
 }

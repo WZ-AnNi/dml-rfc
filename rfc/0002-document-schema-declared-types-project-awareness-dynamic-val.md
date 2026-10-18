@@ -8,7 +8,7 @@
 - **Stage:** stage:draft
 - **State:** open
 - **Issue:** https://github.com/WZ-AnNi/dml-rfc/issues/2
-- **Updated:** 2026-10-18T01:03:15Z
+- **Updated:** 2026-10-18T01:03:34Z
 
 ---
 
