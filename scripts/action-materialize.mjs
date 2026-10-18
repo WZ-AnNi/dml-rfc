@@ -87,6 +87,8 @@ function header({ id, number, title, stage, state, url, updated }) {
     "",
     "---",
     "",
+    // the body follows; the blank line above keeps the first `### ` a block
+    // element rather than a setext heading glued to the rule
   ].join("\n")
 }
 
@@ -117,7 +119,12 @@ for (const i of issues) {
       state: i.state,
       url: i.html_url,
       updated: i.updated_at,
-    }) + body.trimStart() + "\n"
+    }) +
+    // the header ends with the `---` rule, so the body needs its own blank line
+    // or the first `### ` glues to the rule as a setext heading
+    "\n" +
+    body.trimStart() +
+    "\n"
 
   writeFileSync(join(OUT_DIR, filename), text)
 

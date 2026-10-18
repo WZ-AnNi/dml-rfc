@@ -107,6 +107,21 @@ test("the generated file carries the id, stage and a do-not-edit header", () => 
   assert.match(text, /stage:draft/)
   assert.match(text, /issues\/42/)
   assert.match(text, /### Summary/)
+  // the body must be separated from the `---` rule by a blank line, or the
+  // first `### ` becomes a setext heading glued to the rule
+  const ruleAt = text.indexOf("\n---\n")
+  assert.ok(ruleAt >= 0, "header should end with a --- rule")
+  assert.ok(
+    text.slice(ruleAt + 5, ruleAt + 6) === "\n",
+    `body must start after a blank line, got: ${JSON.stringify(text.slice(ruleAt, ruleAt + 14))}`,
+  )
+})
+
+test("a generated header never leaves the first heading glued to the rule", () => {
+  const s = makeSandbox()
+  s.run([issue(1, "T", "### Summary\n\nx\n")])
+  const text = s.file("0001-t.md")
+  assert.ok(!/\n---\n###/.test(text), "the --- rule must not be immediately followed by a heading")
 })
 
 test("index.json is sorted by number and carries every field", () => {
