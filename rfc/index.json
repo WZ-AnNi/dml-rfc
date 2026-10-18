@@ -1,6 +1,6 @@
 {
   "repo": "WZ-AnNi/dml-rfc",
-  "generatedAt": "2026-10-18T01:08:49.176Z",
+  "generatedAt": "2026-10-18T01:22:42.055Z",
   "count": 2,
   "rfc": [
     {
@@ -12,7 +12,7 @@
       "file": "0001-static-markup-emission-html-generic-xml.md",
       "url": "https://github.com/WZ-AnNi/dml-rfc/issues/1",
       "createdAt": "2026-10-18T00:59:49Z",
-      "updatedAt": "2026-10-18T01:08:43Z"
+      "updatedAt": "2026-10-18T01:08:54Z"
     },
     {
       "id": "RFC-2",
