@@ -1,0 +1,98 @@
+# RFC submission form.
+#
+# This form exists so an RFC can be filed with NO tooling: no clone, no branch,
+# no CLI, no pull request. The browser posts an issue, GitHub allocates the
+# number atomically, and that number becomes the RFC id — which is exactly why
+# two people filing at the same second cannot collide.
+#
+# The `### <label>` headings this form emits are the SAME keys rfc-lib.mjs
+# parses, so a form submission and a `rfc submit` body validate through one code
+# path. Changing a label here without changing RFC_FIELDS in scripts/rfc-lib.mjs
+# will make one of the two routes fail validation.
+name: RFC
+description: Propose a change to DML / TSDML. No code required.
+title: "RFC: "
+labels: ["stage:draft", "rfc"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing something. A few notes before you start:
+
+        - **You are not required to write any code.** This issue *is* the RFC.
+        - The **RFC id is assigned automatically** from the issue number and is
+          never reused, so you do not need to pick one.
+        - The **Shape rationale** section is required. If your proposal adds
+          syntax or an API, say what *shape* it has — how a reader recognises it
+          without consulting a list of reserved words. A construct whose only
+          marker is a reserved name is a convention, not syntax; that is a fine
+          thing to propose, but say so explicitly.
+        - Everything here is **public**. Do not paste keys, tokens or private URLs.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One paragraph — what changes, and for whom.
+      placeholder: This RFC adds ... so that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: The problem, and what breaks today without this.
+      placeholder: Today it is impossible to ... because ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: shape-rationale
+    attributes:
+      label: Shape rationale
+      description: |
+        What SHAPE does this have? How does a reader recognise it without a name
+        lookup? Say whether it is syntax-level or only a convention.
+      placeholder: |
+        Adds no new syntax — it extends the existing CLI, so zero reserved words.
+        / OR: introduces `@name(...)`, which is recognisable by its parentheses.
+        / OR: uses a reserved word only; this is a convention, accepted because ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: The design itself — syntax, behaviour, errors, edge cases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else was tried or rejected, and why.
+
+  - type: textarea
+    id: drawbacks
+    attributes:
+      label: Drawbacks
+      description: Real costs — complexity, migration, maintenance.
+
+  - type: textarea
+    id: unresolved
+    attributes:
+      label: Unresolved questions
+      description: Open decisions this RFC does not settle.
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I have not pasted any credential, token or private URL.
+          required: true
+        - label: I understand the RFC id is the issue number and cannot be chosen.
+          required: true

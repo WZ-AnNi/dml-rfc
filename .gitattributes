@@ -1,0 +1,18 @@
+# Force LF in the repository for text files.
+#
+# Windows' `core.autocrlf` would otherwise convert these on checkout, and CRLF
+# breaks two things here specifically:
+#
+#   - the workflow YAML (GitHub parses it fine, but a stray CR inside a `run:`
+#     heredoc lands in the shell script, and `set -euo pipefail` blocks with a
+#     CR are a classic silent failure);
+#   - the generated `rfc/*.md`, which the exporter writes with LF and diffs
+#     against a CRLF working copy on every run — producing a perpetual
+#     "changed" commit that never converges.
+* text=auto eol=lf
+
+# Binary by extension, so a future asset is not mangled.
+*.png binary
+*.jpg binary
+*.svg text eol=lf
+*.exe binary

@@ -1,0 +1,19 @@
+{
+  "name": "dml-rfc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RFC repository for DML / TSDML. Proposals are GitHub issues; the issue number is the RFC id. This repo holds the tooling (form, validation Action, materializer, CLI), not the proposals.",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bin": {
+    "rfc": "./scripts/rfc.mjs"
+  },
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "check": "node scripts/rfc.mjs check",
+    "list": "node scripts/rfc.mjs list",
+    "sync": "node scripts/rfc.mjs sync"
+  }
+}

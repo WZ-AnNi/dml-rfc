@@ -1,0 +1,57 @@
+# Validate every RFC.
+#
+# Triggers on issue events (the submission path) and on manual dispatch. The
+# validation logic lives in scripts/rfc-lib.mjs and is shared with the CLI, so a
+# `rfc check` on a laptop and this workflow agree by construction.
+#
+# Security posture:
+#   - `permissions:` is pinned to the minimum needed (issues + metadata). No
+#     contents:write here — this workflow never commits.
+#   - The Issue body is DATA. It arrives via `github.event` (untrusted input)
+#     and is passed to node on STDIN, never interpolated into a shell command.
+#     `${{ }}` expansion inside a `run:` block would be a script-injection hole.
+name: validate RFC
+
+on:
+  issues:
+    types: [opened, edited, labeled, reopened]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to validate
+        required: true
+        type: string
+
+permissions:
+  issues: write
+  contents: read
+
+# One run per issue at a time: a rapid edit-then-label would otherwise post two
+# comments and race on labels.
+concurrency:
+  group: rfc-validate-${{ github.event.issue.number || inputs.issue }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # The library has no dependencies, so there is nothing to install. The
+      # tests still run first: a broken validator should fail loudly here rather
+      # than mislabel a real RFC.
+      - name: self-test the validator
+        run: node scripts/run-tests.mjs
+
+      - name: validate the issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue }}
+        # The event payload is handed over on stdin. `toJSON` of the event is
+        # safe here because it is consumed as data by the script, never by a shell.
+        run: node scripts/action-validate.mjs < "$GITHUB_EVENT_PATH"

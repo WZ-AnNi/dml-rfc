@@ -1,0 +1,66 @@
+# Materialize RFCs: issues -> rfc/NNNN-slug.md + rfc/index.json.
+#
+# Why this exists: GitHub Issues are the system of record (atomic id allocation,
+# web UI, API, labels-as-state), but they are a poor archive — no git history, no
+# offline read, no grep. This exports them on a schedule and commits the result,
+# so the RFC set is browsable and reviewable as ordinary files.
+#
+# The issue remains the source of truth; these files are regenerated wholesale.
+#
+# Permissions:
+#   - `contents: write` — this workflow commits the export.
+#   - `issues: read`    — it reads the issues it exports.
+name: materialize RFC
+
+on:
+  schedule:
+    # daily at 03:17 UTC; off the hour so it does not pile onto cron peaks
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  issues:
+    types: [closed, reopened, labeled, unlabeled, edited]
+
+permissions:
+  contents: write
+  issues: read
+
+# Serialise: two concurrent runs would both write the export and race on the
+# commit. `cancel-in-progress: false` lets the queued one run after, keeping the
+# later state.
+concurrency:
+  group: rfc-materialize
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # a plain token is enough to push the generated files
+          persist-credentials: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: self-test the exporter
+        run: node scripts/run-tests.mjs
+
+      - name: export issues to files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/action-materialize.mjs
+
+      - name: commit if changed
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rfc
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(rfc): materialize RFC export [skip ci]"
+          git push

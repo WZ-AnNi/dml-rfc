@@ -1,0 +1,7 @@
+# local drafts — a draft is not a proposal until it is submitted, so it does not
+# belong in the history. `rfc new` writes here.
+drafts/
+
+node_modules/
+*.log
+.DS_Store
