@@ -1,0 +1,18 @@
+{
+  "repo": "WZ-AnNi/dml-rfc",
+  "generatedAt": "2026-10-18T01:00:01.672Z",
+  "count": 1,
+  "rfc": [
+    {
+      "id": "RFC-1",
+      "number": 1,
+      "title": "Static markup emission (HTML / generic XML)",
+      "stage": "draft",
+      "state": "open",
+      "file": "0001-static-markup-emission-html-generic-xml.md",
+      "url": "https://github.com/WZ-AnNi/dml-rfc/issues/1",
+      "createdAt": "2026-10-18T00:59:49Z",
+      "updatedAt": "2026-10-18T00:59:49Z"
+    }
+  ]
+}
