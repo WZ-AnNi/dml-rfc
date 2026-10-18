@@ -1,7 +1,7 @@
 {
   "repo": "WZ-AnNi/dml-rfc",
-  "generatedAt": "2026-10-18T01:02:16.566Z",
-  "count": 1,
+  "generatedAt": "2026-10-18T01:03:24.333Z",
+  "count": 2,
   "rfc": [
     {
       "id": "RFC-1",
@@ -13,6 +13,17 @@
       "url": "https://github.com/WZ-AnNi/dml-rfc/issues/1",
       "createdAt": "2026-10-18T00:59:49Z",
       "updatedAt": "2026-10-18T01:00:13Z"
+    },
+    {
+      "id": "RFC-2",
+      "number": 2,
+      "title": "Document schema: declared types, project awareness, dynamic value sources",
+      "stage": "draft",
+      "state": "open",
+      "file": "0002-document-schema-declared-types-project-awareness-dynamic-val.md",
+      "url": "https://github.com/WZ-AnNi/dml-rfc/issues/2",
+      "createdAt": "2026-10-18T01:03:15Z",
+      "updatedAt": "2026-10-18T01:03:15Z"
     }
   ]
 }
