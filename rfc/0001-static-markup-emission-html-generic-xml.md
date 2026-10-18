@@ -8,9 +8,10 @@
 - **Stage:** stage:draft
 - **State:** open
 - **Issue:** https://github.com/WZ-AnNi/dml-rfc/issues/1
-- **Updated:** 2026-10-18T00:59:49Z
+- **Updated:** 2026-10-18T01:00:13Z
 
 ---
+
 ### Summary
 
 Compile a DML template into static HTML and generic XML markup, so a consumer
