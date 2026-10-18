@@ -141,7 +141,7 @@ scripts/
   run-tests.mjs               discovers and runs every *.test.mjs
   action-validate.mjs         validation workflow entry point
   action-materialize.mjs      export workflow entry point
-  *.test.mjs                  75 tests, no dependencies, no network
+  *.test.mjs                  81 tests, no dependencies, no network
 rfc/                          GENERATED export — never edit by hand
 seeds/                        RFCs written before the repo existed, awaiting filing
 drafts/                       local drafts, not committed
@@ -159,7 +159,7 @@ read offline and reviewed as an ordinary diff.
 ## Running the tests
 
 ```bash
-npm test        # 75 tests, pure Node, no install step
+npm test        # 81 tests, pure Node, no install step
 ```
 
 There are no dependencies. The suite covers:
@@ -179,6 +179,9 @@ There are no dependencies. The suite covers:
 - `remote.test.mjs` — the target repo is read from the git remote **without**
   requiring the host to be `github.com` (SSH aliases are normal), and a local
   path is refused rather than guessed at.
+- `push-race.test.mjs` — drives two real clones through a genuine push race and
+  proves the retry must be `merge -X ours`: a rebase stops on the same-file
+  conflict, and `-X theirs` keeps the stale export.
 
 ---
 

@@ -125,6 +125,23 @@ test("materialize guards its commit against an empty diff", () => {
   assert.match(yml, /git diff --cached --quiet/)
 })
 
+test("the export push retries, and merges rather than rebasing", () => {
+  const yml = workflows()["materialize.yml"]
+  // a bare push loses the race; the step must loop
+  assert.match(yml, /for attempt in 1 2 3/, "the push must be retried")
+  // rebase stops on the same-file conflict (see push-race.test.mjs), so it must
+  // not be reintroduced
+  assert.ok(!/git rebase/.test(yml), "materialize must not rebase: the export conflicts on the same file")
+})
+
+test("the export merge resolves in favour of the fresh export (-X ours)", () => {
+  const yml = workflows()["materialize.yml"]
+  // In a merge, "ours" is the CURRENT branch — this run's freshly generated
+  // export. `-X theirs` would keep the stale one. This direction was measured.
+  assert.match(yml, /merge -X ours/, "the merge must favour this run's export")
+  assert.ok(!/merge -X theirs/.test(yml), "-X theirs keeps the STALE export")
+})
+
 test("concurrency is declared so runs cannot race on comments or commits", () => {
   for (const [name, yml] of Object.entries(workflows())) {
     assert.match(yml, /^concurrency:/m, `${name} has no concurrency group`)

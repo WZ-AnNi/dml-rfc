@@ -63,4 +63,29 @@ jobs:
             exit 0
           fi
           git commit -m "chore(rfc): materialize RFC export [skip ci]"
-          git push
+
+          # A plain `git push` fails whenever anything else reached main first —
+          # which happens routinely here: one issue event can spawn several runs,
+          # and a local push races them.
+          #
+          # The export is regenerated wholesale from the API, so any complete
+          # export is as good as any other and the newest must win. That makes
+          # this a *content* conflict on the same file (index.json), which is why
+          # `rebase` is wrong here — it stops on the conflict and leaves the run
+          # stuck, which was verified against a real two-clone simulation.
+          #
+          # `merge -X ours`: in a merge, "ours" is THIS run's freshly generated
+          # export and "theirs" is what landed first, so `-X ours` keeps the
+          # newest export. (The direction is counter-intuitive and was measured,
+          # not assumed: `-X theirs` kept the stale one.)
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "pushed (attempt $attempt)"
+              exit 0
+            fi
+            echo "push rejected on attempt $attempt — merging origin/main (-X ours)"
+            git fetch origin main
+            git merge -X ours --no-edit origin/main
+          done
+          echo "::error::could not push the export after 3 attempts"
+          exit 1
