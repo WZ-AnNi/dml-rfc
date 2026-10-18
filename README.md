@@ -141,7 +141,7 @@ scripts/
   run-tests.mjs               discovers and runs every *.test.mjs
   action-validate.mjs         validation workflow entry point
   action-materialize.mjs      export workflow entry point
-  *.test.mjs                  69 tests, no dependencies, no network
+  *.test.mjs                  74 tests, no dependencies, no network
 rfc/                          GENERATED export — never edit by hand
 seeds/                        RFCs written before the repo existed, awaiting filing
 drafts/                       local drafts, not committed
@@ -159,7 +159,7 @@ read offline and reviewed as an ordinary diff.
 ## Running the tests
 
 ```bash
-npm test        # 69 tests, pure Node, no install step
+npm test        # 74 tests, pure Node, no install step
 ```
 
 There are no dependencies. The suite covers:
@@ -176,6 +176,9 @@ There are no dependencies. The suite covers:
   must match the code; a doc that contradicts `RFC_FIELDS` fails CI.
 - `seeds.test.mjs` — the proposals in `seeds/` must pass the very contract they
   document, or the contract is wrong rather than the seed.
+- `remote.test.mjs` — the target repo is read from the git remote **without**
+  requiring the host to be `github.com` (SSH aliases are normal), and a local
+  path is refused rather than guessed at.
 
 ---
 

@@ -49,6 +49,46 @@ import {
 const HERE = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = resolve(HERE, "..")
 
+/**
+ * Extract `OWNER/NAME` from a git remote URL.
+ *
+ * The host is **not** required to be `github.com`: SSH config commonly aliases
+ * it (`git@github-wz:owner/name.git`), and GitHub Enterprise uses another host
+ * entirely. The owner/name pair is the path component in every form, so this
+ * reads the path and ignores the host:
+ *
+ *   git@github.com:owner/name.git          → owner/name
+ *   git@github-wz:owner/name.git           → owner/name   (SSH alias)
+ *   ssh://git@github.com/owner/name.git    → owner/name
+ *   https://github.com/owner/name.git      → owner/name
+ *   https://user@host/owner/name           → owner/name
+ *
+ * Returns null for a local path or anything unrecognisable — the caller then
+ * asks for RFC_REPO rather than guessing.
+ */
+export function repoFromRemoteUrl(url) {
+  if (!url) return null
+  const s = String(url).trim().replace(/\.git$/, "")
+  // scp-like syntax: [user@]host:path
+  const scp = /^[A-Za-z0-9._-]+@[^:/\s]+:(.+)$/.exec(s)
+  const path = scp
+    ? scp[1]
+    : (() => {
+        // URL syntax; requires a scheme, otherwise it is a local path
+        const m = /^[a-z][a-z0-9+.-]*:\/\//i.exec(s)
+        if (!m) return null
+        const rest = s.slice(m[0].length)
+        const slash = rest.indexOf("/")
+        return slash === -1 ? null : rest.slice(slash + 1)
+      })()
+  if (!path) return null
+  const parts = path.replace(/^\/+|\/+$/g, "").split("/")
+  if (parts.length < 2) return null
+  const [owner, name] = parts.slice(-2)
+  if (!owner || !name || name === "." || name === "..") return null
+  return `${owner}/${name}`
+}
+
 /** `OWNER/NAME` of the RFC repo. */
 function repoSlug() {
   if (process.env.RFC_REPO) return process.env.RFC_REPO
@@ -61,8 +101,7 @@ function repoSlug() {
       // that is an expected probe outcome, not something to show the user.
       stdio: ["ignore", "pipe", "ignore"],
     }).trim()
-    const m = /github\.com[:/]([^/]+\/[^/.]+?)(?:\.git)?$/.exec(url)
-    if (m) return m[1]
+    return repoFromRemoteUrl(url)
   } catch {
     /* no git or no remote — callers report the remedy */
   }
@@ -342,7 +381,6 @@ function cmdSync() {
 // entry
 // ---------------------------------------------------------------------------
 
-const [cmd, ...args] = process.argv.slice(2)
 const COMMANDS = {
   new: cmdNew,
   check: cmdCheck,
@@ -353,8 +391,21 @@ const COMMANDS = {
   sync: cmdSync,
 }
 
-if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
-  console.log(`rfc — file an RFC without touching the code repository
+/**
+ * Only act when this file is the program being run.
+ *
+ * Without this guard, `import { repoFromRemoteUrl } from "./rfc.mjs"` in a test
+ * would execute the CLI (and call `process.exit`). Comparing the resolved paths
+ * is what makes the module importable and testable.
+ */
+const invokedDirectly =
+  process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])
+
+if (invokedDirectly) {
+  const [cmd, ...args] = process.argv.slice(2)
+
+  if (!cmd || cmd === "help" || cmd === "--help" || cmd === "-h") {
+    console.log(`rfc — file an RFC without touching the code repository
 
 usage: rfc <command> [args]
 
@@ -368,8 +419,9 @@ usage: rfc <command> [args]
 
   RFC_REPO=owner/name   override the target repo (default: this repo's origin)
 `)
-  process.exit(0)
-}
+    process.exit(0)
+  }
 
-if (!COMMANDS[cmd]) die(`unknown command "${cmd}" (try: rfc help)`)
-COMMANDS[cmd](args)
+  if (!COMMANDS[cmd]) die(`unknown command "${cmd}" (try: rfc help)`)
+  COMMANDS[cmd](args)
+}
